@@ -2,6 +2,8 @@ stages:
  - install_tools
  - unit_test
  - sequarity
+ - docker
+ - deploy
 install_tool_docker_kubelet_sonarqube_trivy:
 (if we want to change runner in future ,so no need to install all tool in new runner,thats why we are wrting in itself pipeline..we can also install all tool on vm (ec2 instance))
 stage: install_tools
@@ -22,9 +24,42 @@ script:
 - mvn test
 tags:
 - self-hosted
-trivy_fs_scan:
+Sequrity_trivy_sonarqube:
+stage: sequarity
 script:
 - trivy fs --format table -o fs.html .
-- 
 tags:
 - self-hosted
+stage: sequarity
+script:
+- copy the code from sonarqube server and gitlabci
+tags:
+- self-hosted
+docker_build_push:
+stage: docker
+script:
+- mvn clean package (This creates a JAR file inside the target/ directory like target/app.jar)
+- docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+- docker build -t savita/boardgamegitlab:v1 .
+- docker push savita/boardgamegitlab:v1 
+tags:
+- self-hosted
+only:
+- main
+k8s_deploy:
+stage: deploy
+variables:
+- KUBECONFIG_PATH: /home/ubuntu/.kube/config
+before_script:
+- mkdir -p $(dirname "KUBECONFIG_PATH")
+- echo "$KUECONFIG_CONTENT" | base64 -d > "$KUBECONFIG_PATH"
+- export KUBECONFIG="$KUBECONFIG_PATH"
+script:
+- k apply -f devlopment-service.yaml
+tags:
+- self-hosted
+only:
+- main
+
+
+
