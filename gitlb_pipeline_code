@@ -1,0 +1,30 @@
+stages:
+ - install_tools
+ - unit_test
+ - sequarity
+install_tool_docker_kubelet_sonarqube_trivy:
+(if we want to change runner in future ,so no need to install all tool in new runner,thats why we are wrting in itself pipeline..we can also install all tool on vm (ec2 instance))
+stage: install_tools
+script:
+- sudo apt install -y openjdk-17-jre-headless
+- sudo apt install -y maven
+- sudo apt install docker.io -y && chmod 666 /var/run/docker.sock
+- sudo apt-get install wget gnupg
+- wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | gpg --dearmor | sudo tee /usr/share/keyrings/trivy.gpg > /dev/null
+- echo "deb [signed-by=/usr/share/keyrings/trivy.gpg] https://aquasecurity.github.io/trivy-repo/deb generic main" | sudo tee -a /etc/apt/sources.list.d/trivy.list
+- sudo apt-get update && sudo apt-get install trivy -y
+- sudo snap install kubectl --classic 
+tags:
+- self-hosted
+unit_testing:
+stage: unit_test
+script:
+- mvn test
+tags:
+- self-hosted
+trivy_fs_scan:
+script:
+- trivy fs --format table -o fs.html .
+- 
+tags:
+- self-hosted
