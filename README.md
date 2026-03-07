@@ -51,3 +51,8 @@ This web application displays lists of board games and their reviews. While anyo
   - username: bugs    |     password: bunny (user role)
   - username: daffy   |     password: duck  (manager role)
 5. You can also sign-up as a new user and customize your role to play with the application! 😊
+## Create Vm for runner and configure with gitlab runner
+1. Create Ec2 instance  and open terminal >> sudo apt upadte
+2. on gitlab ci  goto CICD and open new project runner and tag the runner ,register runner and follow instruction to configure VM(ec2) and gitlab runner.After sussecfull configuration vm as runner start writing pipeline > build >> pipeline editor
+3.  Install sonarqube on vm, then configure gitlab with sonarqube server @ ip:9000.you can see your project is visible on sonarqube server.
+   docker run -d -p 9000:9000 sonarqube:lts-community
