@@ -1,7 +1,7 @@
 stages:
  - install_tools
  - unit_test
- - sequarity
+ - security
  - docker
  - deploy
 install_tool_docker_kubelet_sonarqube_trivy:
